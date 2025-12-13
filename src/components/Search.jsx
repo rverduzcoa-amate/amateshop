@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { products } from '../data/products';
+import resolvePublicPath from '../utils/resolvePublicPath';
 
 function Search() {
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ function Search() {
                         <Link to={`/products/${prod.id}`} key={prod.id} className="card show" style={{ display: 'block', marginBottom: 16, textDecoration: 'none', color: 'inherit' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                                 <img
-                                    src={Array.isArray(prod.img) ? prod.img[0] : prod.img}
+                                    src={resolvePublicPath(Array.isArray(prod.img) ? prod.img[0] : prod.img)}
                                     alt={prod.nombre}
                                     style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', background: '#f0f0f0' }}
                                 />

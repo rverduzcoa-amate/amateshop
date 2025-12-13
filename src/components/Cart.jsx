@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { products } from '../data/products';
+import resolvePublicPath from '../utils/resolvePublicPath';
 
 function getAllProductsMap() {
     // Flatten all products into a map by id
@@ -83,7 +84,7 @@ function Cart() {
                             if (!prod) return null;
                             return (
                                 <li key={item.id} style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
-                                    <img src={Array.isArray(prod.img) ? prod.img[0] : prod.img} alt={prod.nombre} style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', background: '#f0f0f0' }} />
+                                    <img src={resolvePublicPath(Array.isArray(prod.img) ? prod.img[0] : prod.img)} alt={prod.nombre} style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', background: '#f0f0f0' }} />
                                     <div style={{ flex: 1 }}>
                                         <div style={{ fontWeight: 600 }}>{prod.nombre}</div>
                                         <div className="precio">{prod.precio}</div>
