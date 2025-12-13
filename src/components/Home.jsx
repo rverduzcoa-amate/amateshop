@@ -83,7 +83,7 @@ function Home() {
                         videosHome.map((v, i) => (
                             <div key={v.id} className={`video-slide-item ${i === currentVideo ? 'active' : ''}`} style={{width: '100%', height: '100%', position: 'absolute', top: 0, left: 0}}>
                                 <video
-                                    src={v.src}
+                                    src={process.env.PUBLIC_URL + v.src}
                                     muted
                                     playsInline
                                     loop
@@ -108,8 +108,8 @@ function Home() {
                 {featured.map((prod) => (
                     <div key={prod.id} className="card show">
                         <Link to={`/products/${prod.id}`} className="product-link">
-                            <img
-                                src={Array.isArray(prod.img) ? prod.img[0] : prod.img}
+                                <img
+                                src={process.env.PUBLIC_URL + (Array.isArray(prod.img) ? prod.img[0] : prod.img)}
                                 alt={prod.nombre}
                                 className="product-img"
                                 loading="lazy"

@@ -45,7 +45,7 @@
   transition: box-shadow 0.2s, filter 0.2s;
 }
 .product-img:empty, .product-img[src=''], .product-img:not([src]) {
-  background: #eee url('./assets/img/icons/no-image.svg') center center/60% no-repeat;
+  background: #eee url('./assets/img/icons/new.svg') center center/60% no-repeat;
   filter: grayscale(0.5);
 }
 

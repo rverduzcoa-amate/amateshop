@@ -54,7 +54,7 @@ function Categories() {
                     {catProducts.map(prod => (
                         <Link to={`/products/${prod.id}`} className="card show product-link" key={prod.id}>
                             <img
-                                src={Array.isArray(prod.img) ? prod.img[0] : prod.img}
+                                src={process.env.PUBLIC_URL + (Array.isArray(prod.img) ? prod.img[0] : prod.img)}
                                 alt={prod.nombre}
                                 className="product-img"
                                 loading="lazy"

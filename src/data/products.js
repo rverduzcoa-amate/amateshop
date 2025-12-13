@@ -47,10 +47,10 @@ export const products = {
         { id: "cadena_405999526_10159328462481384_4355777764306565261_n", nombre: "405999526 10159328462481384 4355777764306565261 N", precio: "$299", img: ["/media/img/cadenas/405999526_10159328462481384_4355777764306565261_n(1).jpg","/media/img/cadenas/405999526_10159328462481384_4355777764306565261_n.jpg"] }
     ],
     layers: [
-        { id: "layers001", nombre: "Layer Gold", precio: "$199", img: "/media/img/pulseras/aceroInoxLayerBolitas.jpg" },
-        { id: "layers002", nombre: "Layer Gold", precio: "$199", img: "/media/img/pulseras/aceroInoxLayerCorazonV.jpg" },
-        { id: "layers003", nombre: "Layer Gold", precio: "$199", img: "/media/img/pulseras/aceroInoxLayersLisos.jpg" },
-        { id: "layers004", nombre: "Layer Gold", precio: "$199", img: "/media/img/pulseras/aceroInoxLayersMar.jpg" },
+        { id: "layers001", nombre: "Layer Gold", precio: "$199", img: "/media/img/layers/aceroInoxLayerBolitas.jpg" },
+        { id: "layers002", nombre: "Layer Gold", precio: "$199", img: "/media/img/layers/aceroInoxLayerCorazonV.jpg" },
+        { id: "layers003", nombre: "Layer Gold", precio: "$199", img: "/media/img/layers/aceroInoxLayersLisos.jpg" },
+        { id: "layers004", nombre: "Layer Gold", precio: "$199", img: "/media/img/layers/aceroInoxLayersMar.jpg" },
         ],
     aretes: [
         { id: "arete_angelinas", nombre: "Angelinas", precio: "$299", img: "/media/img/aretes/Angelinas.jpg" },
