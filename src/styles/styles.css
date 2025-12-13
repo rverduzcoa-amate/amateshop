@@ -1,0 +1,399 @@
+/* styles/styles.css - Amate Joyería (Corregido y Responsive) */
+
+@font-face {
+    font-family: "Ámate";
+    /* Asegúrate de que esta ruta sea correcta en tu servidor */
+    src: url('/fonts/tufuentelocal.woff2') format('woff2'); 
+    font-weight: normal;
+    font-style: normal;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: #fff;
+    color: #222;
+    /* FIX DE SCROLL: Permitir scroll vertical natural */
+    height: 100%;
+    overflow-x: hidden; 
+    overflow-y: auto; 
+}
+
+/* =====================================
+   HEADER SUPERIOR (Responsive Fix)
+   ===================================== */
+
+.main-header {
+    width: 100%;
+    height: 60px; /* Altura fija */
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    padding: 0 8px; /* Reducido para ganar espacio */
+}
+
+/* --- Navegación Izquierda --- */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Menos espacio entre botones */
+    flex: 1; /* Ocupa espacio disponible */
+}
+
+.nav-button {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px; /* Tamaño base más seguro */
+    font-weight: 600;
+    cursor: pointer;
+    padding: 5px 8px;
+    white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+}
+
+/* --- Logo Central --- */
+.header-logo {
+    position: absolute; /* Centrado absoluto */
+    left: 50%;
+    transform: translateX(-50%);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Asegura que esté por encima si hay solapamiento leve */
+}
+
+.logo-text {
+    font-size: 24px; /* Tamaño más equilibrado para móvil */
+    font-weight: bold;
+    color: #333;
+    /* Usa serif como fallback si la fuente local falla */
+    font-family: "Ámate", 'Playfair Display', serif; 
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* --- Acciones Derecha --- */
+.header-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end; /* Alinea a la derecha */
+    gap: 2px; /* Espacio mínimo entre iconos */
+    flex: 1;
+}
+
+.action-button {
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 8px; /* Área táctil decente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* === RESPONSIVE: Ajustes para Pantallas Pequeñas (< 380px) === */
+@media (max-width: 380px) {
+    .nav-button {
+        font-size: 12px; /* Texto más pequeño */
+        padding: 5px;
+    }
+    .logo-text {
+        font-size: 20px; /* Logo un poco más chico para que no choque */
+    }
+    .action-button {
+        padding: 6px; /* Iconos más compactos */
+        font-size: 16px;
+    }
+    /* Ocultar "Inicio" en móviles muy pequeños para dar espacio */
+    .mobile-hide {
+        display: none;
+    }
+}
+
+/* =====================================
+   CONTENIDO PRINCIPAL
+   ===================================== */
+
+/* Mueve el contenido hacia abajo para respetar el header fijo */
+.main-content {
+    padding-top: 60px; 
+    padding-bottom: 30px; /* Espacio al final */
+    min-height: 100vh; /* Asegura que ocupe al menos toda la pantalla */
+}
+
+/* GRID de productos */
+#products {
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* 150px min para móviles */
+    gap: 20px 15px; 
+    align-items: start;
+}
+
+/* CARD producto */
+.card {
+    border-radius: 12px;
+    background: #fff;
+    padding: 8px; /* Padding interno reducido */
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: block;
+    height: auto;
+    opacity: 0; 
+    transform: translateY(20px); 
+    transition: opacity .4s ease, transform .4s ease;
+}
+
+/* Animaciones */
+.card.show { 
+    opacity: 1; 
+    transform: translateY(0); 
+    position: relative; 
+    z-index: 1;
+}
+
+/* Títulos y precio */
+h3 { margin: 8px 0 4px 0; font-size: 14px; font-weight: 600; }
+.precio { font-weight: bold; color: #b38e5d; margin-bottom: 5px; font-size: 14px; }
+
+/* Mensaje sin productos */
+.no { text-align: center; margin-top: 20px; font-size: 16px; }
+
+
+/* CARRUSEL MINIATURAS (Productos) */
+.carousel {
+    position: relative;
+    width: 100%;
+    /* Aspect Ratio cuadrado o 4:5 para productos se ve mejor en móvil */
+    aspect-ratio: 1 / 1; 
+    height: auto; /* Dejar que el aspect-ratio controle la altura */
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 5px; 
+    background: #f9f9f9;
+}
+.carousel .carousel-images {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+}
+.carousel .carousel-images img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+
+/* Image skeleton while loading to reduce perceived jitter */
+.img-skeleton {
+    background: linear-gradient(90deg,#f0f0f0 0%, #e8e8e8 50%, #f0f0f0 100%);
+    background-size: 200% 100%;
+    animation: skeleton 1.2s linear infinite;
+}
+.carousel .carousel-images img.loading {
+    filter: blur(3px);
+    transform: scale(1.02);
+}
+@keyframes skeleton { from { background-position: 200% 0 } to { background-position: -200% 0 } }
+.carousel .carousel-images img.active {
+    opacity: 1;
+    z-index: 2;
+}
+
+/* Botones del carrusel de productos (más sutiles) */
+.carousel button.prev, .carousel button.next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.7);
+    border: none;
+    width: 24px; height: 24px;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 5;
+    display: flex; align-items: center; justify-content: center;
+}
+.carousel button.prev { left: 5px; }
+.carousel button.next { right: 5px; }
+
+/* Dots */
+.carousel .dots {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    z-index: 11;
+}
+.carousel .dot {
+    width: 6px; height: 6px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+}
+.carousel .active-dot {
+    background: #333;
+}
+
+
+/* === VISTAS SECUNDARIAS === */
+/* Estilos para el router de vistas */
+.view { display: none; }
+.view.active-view { display: block; }
+
+/* Header secundario (Búsqueda, Categorías, etc) */
+.header-view {
+    position: fixed; /* Fijo para que no scrollee */
+    top: 60px; /* Debajo del header principal */
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background: #f9f9f9;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    z-index: 900;
+}
+.header-view h1 { margin: 0 auto; font-size: 16px; font-weight: bold; }
+.header-view button {
+    background: none; border: none; font-size: 14px; cursor: pointer;
+    position: absolute; left: 15px; color: #555;
+}
+
+/* Ajuste de padding para vistas secundarias */
+#view-categories, #view-newArrivals, #view-product, #view-search, #view-account, #view-cart {
+    padding-top: 50px; /* Espacio para el header secundario */
+}
+
+
+/* === VISTA BÚSQUEDA === */
+.search-view-content { padding: 15px; }
+.search-box-full { margin-bottom: 15px; }
+.search-box-full input {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    outline: none;
+    background: #f5f5f5;
+}
+
+/* === CARRUSEL DE REELS (Home) === */
+/* Asegurar que los videos no muestren controles nativos o superpuestos */
+.vertical-carousel-container video,
+.video-slide-item video {
+    pointer-events: none; /* Evita que el usuario interactúe y ponga pausa */
+    user-select: none;    /* Evita la selección */
+}
+.vertical-carousel-container {
+    width: 100%;
+    max-width: 350px; 
+    margin: 15px auto 20px;
+    aspect-ratio: 9 / 16; 
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+#videoSlides, .video-slide-item { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+.video-slide-item { opacity: 0; transition: opacity 0.4s ease; }
+.video-slide-item.active { opacity: 1; z-index: 10; }
+.video-slide-item video { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+
+/* === CARRUSEL DE CATEGORÍAS (Clicable) === */
+/* Asegurar que los videos no muestren controles nativos o superpuestos */
+.category-video-slide-item video {
+    pointer-events: none; /* Evita que el usuario interactúe y ponga pausa */
+    user-select: none;
+}
+.section-title-wrapper { text-align: center; margin: 20px 0 10px; }
+.section-title-wrapper h2 { font-size: 18px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+
+.category-carousel-container {
+    width: 95%; /* Un poco de margen a los lados */
+    margin: 0 auto 30px;
+    position: relative;
+    height: 160px; /* Altura fija */
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+#categoryVideoSlides, .category-video-slide-item { width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
+.category-video-slide-item { opacity: 0; transition: opacity 0.6s ease; cursor: pointer; background: #000; }
+.category-video-slide-item.active { opacity: 1; z-index: 5; }
+.category-video-slide-item video { 
+    width: 100%; height: 100%; object-fit: cover; 
+    filter: brightness(0.7); /* Oscurecer para leer texto */
+}
+
+.video-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    color: #fff; text-align: center;
+}
+.video-overlay h3 { margin: 0; font-size: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.video-overlay p { margin: 5px 0 0; font-size: 12px; opacity: 0.9; }
+
+
+/* Grid de categorías (Iconos) */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 15px; padding: 20px;
+}
+.category-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #fff; border-radius: 12px; padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center;
+}
+.category-card img { width: 40px; height: 40px; margin-bottom: 8px; }
+.category-card p { margin: 0; font-size: 12px; font-weight: 600; }
+
+/* Global tap-to-play overlay used when autoplay is blocked */
+#global-play-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.35);
+    z-index: 9999;
+}
+
+#global-play-overlay #global-play-button {
+    background: #ffffff;
+    color: #111;
+    border: none;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .video-slide-item, .category-video-slide-item { transition: none !important; }
+}
