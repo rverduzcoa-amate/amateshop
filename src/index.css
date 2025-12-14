@@ -92,7 +92,6 @@
 }
 .product-img:empty, .product-img[src=''], .product-img:not([src]) {
   background: #eee url('./assets/img/icons/new.svg') center center/60% no-repeat;
-  filter: grayscale(0.5);
 }
 
 .body {
