@@ -14,6 +14,26 @@
   transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.18s;
   letter-spacing: 0.01em;
 }
+.site-logo-text {
+  font-family: 'Higuen Elegant Serif', 'Times New Roman', serif;
+  font-size: 25px;
+  line-height: 1;
+  color: #3b2b13;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.site-logo-sub {
+  font-family: 'Higuen Elegant Serif', 'Times New Roman', serif;
+  font-size: 11px;
+  margin-top: -3px;
+  color: #251500;
+  letter-spacing: 0.3em;
+}
+
+/* If you want to use the "Higuen Elegant Serif" webfont, place the WOFF2 file
+  at `public/media/fonts/HiguenElegantSerif.woff2` and uncomment a matching
+  @font-face rule here. Leaving the rule commented avoids build-time module
+  resolution errors when the font file is not present. */
 .add-to-cart-btn:hover {
   background: linear-gradient(90deg, #a07d4a 60%, #c7a16a 100%);
   color: #fff;
@@ -49,18 +69,53 @@
   filter: grayscale(0.5);
 }
 
-body {
+.body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  padding-top: 64px; /* space for persistent header */
+  padding-top: 64px; /* space for fixed header + small gap */
 }
 
 .persistent-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  transform: translateY(0);
+  opacity: 1;
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 260ms ease;
+  will-change: transform, opacity;
+  z-index: 9999;
+}
+
+.persistent-header.hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Ensure the carousel content sits under the fixed header */
+.vertical-carousel-container {
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+.video-slide-item {
+  z-index: 0;
+}
+.vertical-carousel-container video {
+  z-index: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .persistent-header .cart-badge {
@@ -81,7 +136,7 @@ body {
 /* General view container */
 .view {
   max-width: 1000px;
-  margin: 32px auto 0 auto;
+  margin: 8px auto 0 auto;
   background: linear-gradient(135deg, #fff 70%, #f7e7c6 100%);
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(199,161,106,0.13);
