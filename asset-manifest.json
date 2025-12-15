@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/amateshop/static/css/main.ee7e8e62.css",
-    "main.js": "/amateshop/static/js/main.ef35a7c0.js",
+    "main.js": "/amateshop/static/js/main.c415ee53.js",
     "static/media/cadenaAceroInoxCorazon.jpg": "/amateshop/static/media/cadenaAceroInoxCorazon.f3535c2af4d5d1c79c64.jpg",
     "static/media/IMG_mas.jpg": "/amateshop/static/media/IMG_mas.6ba34ca588c0c7096a58.jpg",
     "static/media/cadenaDoradaModelada.mp4": "/amateshop/static/media/cadenaDoradaModelada.8dfce27511a236770a64.mp4",
@@ -142,10 +142,10 @@
     "index.html": "/amateshop/index.html",
     "static/media/new.svg": "/amateshop/static/media/new.30f8d5f6a1013eebf2dd.svg",
     "main.ee7e8e62.css.map": "/amateshop/static/css/main.ee7e8e62.css.map",
-    "main.ef35a7c0.js.map": "/amateshop/static/js/main.ef35a7c0.js.map"
+    "main.c415ee53.js.map": "/amateshop/static/js/main.c415ee53.js.map"
   },
   "entrypoints": [
     "static/css/main.ee7e8e62.css",
-    "static/js/main.ef35a7c0.js"
+    "static/js/main.c415ee53.js"
   ]
 }
