@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/amateshop/static/css/main.ae8b9944.css",
+    "main.css": "/amateshop/static/css/main.ee7e8e62.css",
     "main.js": "/amateshop/static/js/main.ef35a7c0.js",
     "static/media/cadenaAceroInoxCorazon.jpg": "/amateshop/static/media/cadenaAceroInoxCorazon.f3535c2af4d5d1c79c64.jpg",
     "static/media/IMG_mas.jpg": "/amateshop/static/media/IMG_mas.6ba34ca588c0c7096a58.jpg",
@@ -140,12 +140,12 @@
     "static/media/relojes.png": "/amateshop/static/media/relojes.495d083a6b66d3ddaaf5.png",
     "static/media/pulseras.png": "/amateshop/static/media/pulseras.64f2289bbfd79ac9818a.png",
     "index.html": "/amateshop/index.html",
-    "static/media/new.svg": "/amateshop/static/media/new.cd60d48f657005a10f43.svg",
-    "main.ae8b9944.css.map": "/amateshop/static/css/main.ae8b9944.css.map",
+    "static/media/new.svg": "/amateshop/static/media/new.30f8d5f6a1013eebf2dd.svg",
+    "main.ee7e8e62.css.map": "/amateshop/static/css/main.ee7e8e62.css.map",
     "main.ef35a7c0.js.map": "/amateshop/static/js/main.ef35a7c0.js.map"
   },
   "entrypoints": [
-    "static/css/main.ae8b9944.css",
+    "static/css/main.ee7e8e62.css",
     "static/js/main.ef35a7c0.js"
   ]
 }
