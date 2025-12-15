@@ -396,3 +396,48 @@ h3 { margin: 8px 0 4px 0; font-size: 14px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
     .video-slide-item, .category-video-slide-item { transition: none !important; }
 }
+
+/* Mobile full-bleed behavior for home sections (covers lateral sides) */
+@media (max-width: 768px) {
+    .vertical-carousel-container,
+    .categories-section,
+    .newarrivals-section {
+        width: 100vw;
+        /* Pull the element out to viewport edges while staying centered */
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding-left: 0;
+        padding-right: 0;
+        border-radius: 0; /* flush edges on mobile */
+        box-shadow: none;
+    }
+
+    /* Make the vertical carousel and category/arrivals banners tall and cover-style */
+    .vertical-carousel-container {
+        max-width: none;
+        margin-top: 10px;
+        margin-bottom: 14px;
+        aspect-ratio: 9 / 16; /* tall reel look */
+        overflow: hidden;
+    }
+
+    .categories-section .categories-carousel-container,
+    .newarrivals-section .categories-carousel-container {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16 / 9; /* rectangular banner */
+        border-radius: 0;
+    }
+
+    /* Ensure videos fill and crop to edges */
+    .vertical-carousel-container video,
+    .categories-section video,
+    .newarrivals-section video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Reduce large section title sizing on small screens */
+    .section-title-wrapper h2 { font-size: 22px; }
+}

@@ -272,7 +272,9 @@ function Home() {
             </div>
 
             {/* new arrivals carousel videos */}
-            <NewArrivals />
+            <div className="newarrivals-section">
+                <NewArrivals />
+            </div>
         </section>
     );
 }
