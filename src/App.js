@@ -5,6 +5,7 @@ import Categories from './components/Categories';
 import Search from './components/Search';
 import Product from './components/Product';
 import Account from './components/Account';
+import NewArrivalsGrid from './components/NewArrivalsGrid';
 
 import Cart from './components/Cart';
 import OrderConfirmation from './components/OrderConfirmation';
@@ -15,6 +16,7 @@ function App() {
       <Route path='/' element={<Home />} />
       <Route path='/categories' element={<Categories />} />
       <Route path='/categories/:categoryId' element={<Categories />} />
+      <Route path='/new-arrivals' element={<NewArrivalsGrid />} />
       <Route path='/search' element={<Search />} />
       <Route path='/products/:productId' element={<Product />} />
       <Route path='/account' element={<Account />} />

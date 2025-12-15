@@ -1,105 +1,147 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import resolvePublicPath from '../utils/resolvePublicPath';
 import { useNavigate } from 'react-router-dom';
 import { newArrivals } from '../data/newArrivals';
 import { products } from '../data/products';
 
-export default function NewArrivals({ limit = 8 }) {
-  const containerRef = useRef(null);
+export default function NewArrivals({ limit = 6 }) {
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
   const itemRefs = useRef([]);
   const videoRefs = useRef([]);
-  const indexRef = useRef(0);
-  const navigate = useNavigate();
+  const touchStartX = useRef(null);
+  const touchDeltaX = useRef(0);
 
-  // Prefer `products` flagged with `new: true`; fallback to data/newArrivals.js
+  // Use `newArrivals` data (videos) for the carousel. If empty, fall back to
+  // `products` entries flagged with `new: true`.
   const items = useMemo(() => {
+    if (newArrivals && newArrivals.length > 0) return newArrivals.slice(0, limit);
     const productItems = Object.keys(products).reduce((acc, key) => {
       (products[key] || []).forEach(p => { if (p && p.new) acc.push({ ...p, category: key }); });
       return acc;
     }, []);
-    return (productItems.length > 0 ? productItems : newArrivals).slice(0, limit);
+    return productItems.slice(0, limit);
   }, [limit]);
 
+  // Play the active slide's video and pause/reset others. Advance on ended.
   useEffect(() => {
     if (!items || items.length === 0) return;
 
-    // build list of indices which have videos
-    const videoIndices = items.map((it, i) => it.video ? i : -1).filter(i => i >= 0);
-    if (videoIndices.length === 0) return;
+    const cleanup = [];
+    videoRefs.current.forEach((v, idx) => {
+      if (!v) return;
 
-    const playIndex = (idx) => {
-      const el = itemRefs.current[idx];
-      if (el && el.scrollIntoView) {
-        try { el.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' }); } catch (e) {}
+      if (v._onEnded) {
+        try { v.removeEventListener('ended', v._onEnded); } catch (e) {}
+        v._onEnded = null;
       }
-      // pause all, play only the requested video
-      videoRefs.current.forEach((v, i) => {
-        try {
-          if (!v) return;
-          if (i === idx) {
-            v.muted = true;
-            try { v.load(); } catch (e) {}
-            v.play().catch(() => {});
-          } else {
-            v.pause();
-            try { v.currentTime = 0; } catch (e) {}
-          }
-        } catch (e) {}
+
+      const onEnded = () => setCurrentIndex(prev => (prev + 1) % items.length);
+      v._onEnded = onEnded;
+      v.addEventListener('ended', onEnded);
+      cleanup.push(() => { try { v.removeEventListener('ended', onEnded); } catch (e) {} });
+
+      if (idx === currentIndex) {
+        try { v.muted = true; v.play().catch(() => {}); } catch (e) {}
+      } else {
+        try { v.pause(); v.currentTime = 0; } catch (e) {}
+      }
+    });
+
+    // scroll active into view for visual feedback (if using inline layout)
+    const activeEl = itemRefs.current[currentIndex];
+    if (activeEl && activeEl.scrollIntoView) {
+      try { activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); } catch (e) {}
+    }
+
+    return () => cleanup.forEach(fn => fn());
+  }, [currentIndex, items]);
+
+  // IntersectionObserver to pause videos that are offscreen (performance)
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const el = entry.target;
+        if (!el) return;
+        if (entry.intersectionRatio < 0.25) {
+          try { el.pause(); } catch (e) {}
+        } else {
+          // if it's the active slide ensure play
+          const idx = videoRefs.current.findIndex(v => v === el);
+          if (idx === currentIndex) try { el.muted = true; el.play().catch(() => {}); } catch (e) {}
+        }
       });
-    };
+    }, { threshold: [0, 0.25, 0.5] });
 
-    // start at first video index
-    indexRef.current = 0;
-    playIndex(videoIndices[indexRef.current]);
+    videoRefs.current.forEach(v => { if (v) try { obs.observe(v); } catch (e) {} });
+    return () => { try { obs.disconnect(); } catch (e) {} };
+  }, [currentIndex, items]);
 
-    const id = setInterval(() => {
-      indexRef.current = (indexRef.current + 1) % videoIndices.length;
-      playIndex(videoIndices[indexRef.current]);
-    }, 4200);
+  // touch handlers for swipe (mobile)
+  const onTouchStart = (e) => { touchStartX.current = e.touches[0].clientX; touchDeltaX.current = 0; };
+  const onTouchMove = (e) => { if (touchStartX.current == null) return; touchDeltaX.current = e.touches[0].clientX - touchStartX.current; };
+  const onTouchEnd = () => {
+    const delta = touchDeltaX.current || 0;
+    const threshold = 40;
+    if (Math.abs(delta) > threshold) {
+      if (delta < 0) setCurrentIndex(prev => (prev + 1) % items.length);
+      else setCurrentIndex(prev => (prev - 1 + items.length) % items.length);
+    }
+    touchStartX.current = null; touchDeltaX.current = 0;
+  };
 
-    return () => clearInterval(id);
-  }, [items]);
+  // pointer handlers for desktop drag/swipe
+  const onPointerDown = (e) => { if (e.pointerType === 'mouse' && e.button !== 0) return; touchStartX.current = e.clientX; touchDeltaX.current = 0; try { e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId); } catch (e) {} };
+  const onPointerMove = (e) => { if (touchStartX.current == null) return; touchDeltaX.current = e.clientX - touchStartX.current; };
+  const onPointerUp = (e) => { onTouchEnd(); try { e.target.releasePointerCapture && e.target.releasePointerCapture(e.pointerId); } catch (e) {} };
 
-  // `items` is computed above in the effect section
+  if (!items || items.length === 0) return null;
 
   return (
-    <div style={{height: 190, marginBottom: 20}} className="new-arrivals-carousel">
-      <div ref={containerRef} style={{display: 'flex', gap: 12, alignItems: 'center', overflowX: 'auto', padding: '85px 1px'}}>
-        {items.map((it, i) => (
-          <div
-            key={it.id || i}
-            ref={el => itemRefs.current[i] = el}
-            style={{width: 320, height: 170, borderRadius: 8, overflow: 'hidden', position: 'relative', background: '#000', boxShadow: '0 6px 18px rgba(0,0,0,0.12)'}}
-          >
-            <button onClick={() => navigate(`/products/${it.id}`)} style={{all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'pointer'}}>
-              {it.video ? (
-                <video
-                  ref={el => videoRefs.current[i] = el}
-                  src={resolvePublicPath(it.video)}
-                  muted
-                  playsInline
-                  loop
-                  preload="auto"
-                  poster={it.poster ? resolvePublicPath(it.poster) : undefined}
-                  style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}}
-                />
-              ) : (
-                <img
-                  src={it.poster ? resolvePublicPath(it.poster) : ''}
-                  alt={it.nombre}
-                  style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}}
-                />
-              )}
+    <div className="categories-section" style={{marginTop: 12}}>
+      <div className="categories-header" style={{justifyContent: 'flex-start'}}>
+        <div className="categories-title" style={{fontSize:16}}>NEW ARRIVALS</div>
+      </div>
 
-              <div style={{position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', textAlign: 'center', pointerEvents: 'none'}}>
-                <div style={{background:'rgba(0,0,0,0.35)', padding:'8px 14px', borderRadius:24, fontWeight:700, display:'inline-flex', gap:8, alignItems:'center'}}>
-                  <span style={{fontSize:14}}>👆</span>
-                  <span style={{fontSize:13}}>Touch to view the category</span>
+      <div className="categories-carousel-container"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+      >
+        <div className="categories-track" style={{position: 'relative', width: '100%', height: '100%'}}>
+          {items.map((it, idx) => (
+            <div
+              key={it.id || idx}
+              ref={el => itemRefs.current[idx] = el}
+              className={`category-slide-item ${idx === currentIndex ? 'active' : ''}`}
+              style={{width: '100%', height: '100%', position: 'absolute', top: 0, left: 0}}
+            >
+              <button type="button" onClick={() => { navigate(it.link || `/products/${it.id}`); try { window.scrollTo(0,0); } catch(e){} }} style={{all: 'unset', display: 'block', width: '100%', height: '100%', cursor: 'pointer'}}>
+                {it.src ? (
+                  <video
+                    ref={el => videoRefs.current[idx] = el}
+                    src={resolvePublicPath(it.src)}
+                    muted
+                    playsInline
+                    preload="auto"
+                    poster={it.poster ? resolvePublicPath(it.poster) : undefined}
+                    style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}}
+                  />
+                ) : (
+                  <img src={it.poster ? resolvePublicPath(it.poster) : ''} alt={it.nombre} style={{width: '100%', height: '100%', objectFit: 'cover', display: 'block'}} />
+                )}
+
+                <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff', textAlign: 'center', pointerEvents: 'none'}}>
+                  <div style={{fontWeight: 700, fontSize: 18, textShadow: '0 1px 3px rgba(0,0,0,0.6)'}}>{it.nombre}</div>
                 </div>
-              </div>
-            </button>
-          </div>
-        ))}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

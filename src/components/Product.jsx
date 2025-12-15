@@ -1,6 +1,6 @@
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import resolvePublicPath from '../utils/resolvePublicPath';
 import { useParams } from 'react-router-dom';
 import { products } from '../data/products';
@@ -27,6 +27,35 @@ function Product() {
     // Soporta imágenes múltiples o una sola
     const images = Array.isArray(product?.img) ? product.img : [product?.img];
     const [mainImg, setMainImg] = useState(images[0]);
+
+    // Lightbox state for zoomed image view
+    const [lightboxOpen, setLightboxOpen] = useState(false);
+    const [lightboxSrc, setLightboxSrc] = useState('');
+    const [lightboxIsSquare, setLightboxIsSquare] = useState(false);
+
+    const openLightbox = (src) => {
+        if (!src) return;
+        // attempt to measure image dimensions to decide square vs rectangle
+        const img = new Image();
+        img.onload = () => {
+            const w = img.naturalWidth || 0;
+            const h = img.naturalHeight || 0;
+            // consider near-square if width/height within ~12%
+            const near = Math.abs(w - h) <= Math.min(w, h) * 0.12;
+            setLightboxIsSquare(near);
+            setLightboxSrc(src);
+            setLightboxOpen(true);
+        };
+        img.src = src;
+    };
+
+    const closeLightbox = () => { setLightboxOpen(false); setLightboxSrc(''); };
+
+    useEffect(() => {
+        const onKey = (e) => { if (e.key === 'Escape') closeLightbox(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, []);
 
     const addToCart = (id) => {
         setCart(prev => {
@@ -58,6 +87,7 @@ function Product() {
                     style={{ width: 260, borderRadius: 10, objectFit: 'cover', background: '#f0f0f0', marginBottom: 8, boxShadow: '0 2px 12px rgba(199,161,106,0.10)' }}
                     loading="lazy"
                     onError={e => { e.target.style.display = 'none'; }}
+                                    onClick={() => openLightbox(resolvePublicPath(mainImg))}
                 />
                 {images.length > 1 && (
                     <div style={{ display: 'flex', gap: 10, marginBottom: 8 }}>
@@ -70,6 +100,7 @@ function Product() {
                                 onClick={() => setMainImg(src)}
                                 loading="lazy"
                                 onError={e => { e.target.style.display = 'none'; }}
+                                onDoubleClick={() => openLightbox(resolvePublicPath(src))}
                             />
                         ))}
                     </div>
@@ -79,6 +110,27 @@ function Product() {
             <button onClick={() => addToCart(product.id)} className="add-to-cart-btn" style={{ background: '#c7a16a', color: '#fff', border: 'none', padding: '10px 24px', fontSize: 18, cursor: 'pointer', marginTop: 16 }}>
                 Añadir al carrito
             </button>
+
+                        {lightboxOpen && (
+                            <div
+                                role="dialog"
+                                aria-modal="true"
+                                onClick={closeLightbox}
+                                tabIndex={-1}
+                                style={{position:'fixed', inset:0, background:'rgba(0,0,0,0.8)', display:'flex', alignItems:'center', justifyContent:'center', zIndex:1200}}
+                            >
+                                <div onClick={e => e.stopPropagation()} style={{maxWidth:'92vw', maxHeight:'92vh', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                                    <div style={{position:'relative'}}>
+                                        <img
+                                            src={lightboxSrc}
+                                            alt={product.nombre}
+                                            style={lightboxIsSquare ? {width: 'min(720px, 90vw)', height: 'min(720px, 90vw)', objectFit: 'cover', display:'block', borderRadius:8} : {maxWidth:'90vw', maxHeight:'90vh', objectFit:'contain', display:'block', borderRadius:8}}
+                                        />
+                                        <button onClick={closeLightbox} aria-label="Cerrar" style={{position:'absolute', right:-10, top:-10, background:'#fff', borderRadius:20, border:'none', width:36, height:36, cursor:'pointer'}}>✕</button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
         </section>
     );
 }
